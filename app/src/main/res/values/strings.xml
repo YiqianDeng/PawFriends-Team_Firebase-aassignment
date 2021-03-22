@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">firebase</string>
+    <string name="username">username</string>
+    <string name="enter_your_username">Enter your username</string>
+    <string name="input_username">enter_username</string>
+    <string name="Go">Go</string>
+    <string name="todo">TODO</string>
+    <string name="img_4">image_of_facemask</string>
+    <string name="img5">image_of_goggles</string>
+    <string name="send">Send</string>
+    <string name="user_list">User List</string>
 </resources>
