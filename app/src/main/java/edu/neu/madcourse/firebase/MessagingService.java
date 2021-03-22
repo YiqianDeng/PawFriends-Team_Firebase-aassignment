@@ -20,21 +20,16 @@ import com.google.firebase.messaging.RemoteMessage;
 
 public class MessagingService extends FirebaseMessagingService {
 
-    private static final String TAG = "MessagingService";
-
     @Override
     public void onNewToken(@NonNull String token) {
 
-        Log.d(TAG, "Refreshed token: " + token);
     }
 
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
         remoteMessage.getData();
         if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Notification: " + remoteMessage.getNotification().getBody());
             showNotification(remoteMessage.getNotification().getBody(), remoteMessage.getNotification().getTag());
         }
     }
@@ -53,10 +48,9 @@ public class MessagingService extends FirebaseMessagingService {
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), Integer.parseInt(imageName));
 
-        String CHANNEL_ID = "MY CUSTOM DEFAULT NOTIFICATION CHANNEL ID";
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Notification notification =
-                new NotificationCompat.Builder(this, CHANNEL_ID)
+                new NotificationCompat.Builder(this, "CHANNEL_ID")
                         .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
                         .setContentTitle("A New Sticker!")
                         .setContentText(messageBody)
@@ -73,11 +67,10 @@ public class MessagingService extends FirebaseMessagingService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+        NotificationChannel channel = new NotificationChannel("CHANNEL_ID",
                 "Channel human readable title",
                 NotificationManager.IMPORTANCE_DEFAULT);
         notificationManager.createNotificationChannel(channel);
-
         notificationManager.notify(0 /* ID of notification */, notification);
     }
 
