@@ -107,6 +107,7 @@ public class StickerSendActivity extends AppCompatActivity {
             }
         });
 
+        // select image
         bttn_send_img.setOnClickListener(v -> {
             if (selectedSticker == 0) {
                 new AlertDialog.Builder(this).setMessage("Please select an image").show();
@@ -126,6 +127,7 @@ public class StickerSendActivity extends AppCompatActivity {
 
     }
 
+    // before sent image
     private void updateCount(DatabaseReference database) {
         database.child("users").child(username).runTransaction(new Transaction.Handler() {
             @NonNull
@@ -149,6 +151,7 @@ public class StickerSendActivity extends AppCompatActivity {
         });
     }
 
+    // select image
     @SuppressLint("NonConstantResourceId")
     public void clickImg(View view) {
         switch (view.getId()) {
@@ -167,6 +170,7 @@ public class StickerSendActivity extends AppCompatActivity {
         }
     }
 
+    // sent messsage
     public void sendMessageToSpecUser(String userToken) {
         JSONObject jPayload = new JSONObject();
         JSONObject jNotification = new JSONObject();
