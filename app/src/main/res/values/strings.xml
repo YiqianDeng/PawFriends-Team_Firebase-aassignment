@@ -9,4 +9,5 @@
     <string name="img5">image_of_goggles</string>
     <string name="send">Send</string>
     <string name="user_list">User List</string>
+    <string name="users_list">Users List</string>
 </resources>

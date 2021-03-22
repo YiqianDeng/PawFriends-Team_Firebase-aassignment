@@ -1,4 +1,5 @@
 package edu.neu.madcourse.firebase;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,11 +28,7 @@ public class MessagingService extends FirebaseMessagingService {
         Log.d(TAG, "Refreshed token: " + token);
     }
 
-    /**
-     * Called when message is received.
-     *
-     * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
-     */
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.d(TAG, "From: " + remoteMessage.getFrom());
@@ -43,8 +40,7 @@ public class MessagingService extends FirebaseMessagingService {
     }
 
     /**
-     * Create and show a simple notification containing the received FCM message.
-     *
+     * Citation: https://developer.android.com/training/notify-user/expanded
      */
     private void showNotification(String messageBody, String imageName) {
         Intent intent = new Intent(this, StickerReceivedActivity.class);
@@ -54,31 +50,35 @@ public class MessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
-        Bitmap remote_picture = BitmapFactory.decodeResource(getResources(), Integer.parseInt(imageName));
-        bigPictureStyle.bigPicture(remote_picture);
 
-        String channelId = "MY CUSTOM DEFAULT NOTIFICATION CHANNEL ID";
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), Integer.parseInt(imageName));
+
+        String CHANNEL_ID = "MY CUSTOM DEFAULT NOTIFICATION CHANNEL ID";
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, channelId)
+        Notification notification =
+                new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
                         .setContentTitle("A New Sticker!")
                         .setContentText(messageBody)
                         .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent)
-                        .setStyle(bigPictureStyle)
-                        .setSound(defaultSoundUri);
+                        .setLargeIcon(bitmap)
+                        .setStyle(new NotificationCompat.BigPictureStyle()
+                                .bigPicture(bitmap)
+                                .bigLargeIcon(null))
+                        .build();
+
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationChannel channel = new NotificationChannel(channelId,
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
                 "Channel human readable title",
                 NotificationManager.IMPORTANCE_DEFAULT);
         notificationManager.createNotificationChannel(channel);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(0 /* ID of notification */, notification);
     }
 
 }
