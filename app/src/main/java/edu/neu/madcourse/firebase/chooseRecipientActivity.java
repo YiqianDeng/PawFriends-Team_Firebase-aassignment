@@ -44,11 +44,11 @@ public class chooseRecipientActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
                 usernameList);
 
-        ListView usersListView = findViewById(R.id.usersListView);
+        ListView usersListView = findViewById(R.id.listView);
         usersListView.setAdapter(adapter);
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        Button bttn_send_img = findViewById(R.id.bttn_send_img);
+        Button btn_choose = findViewById(R.id.btn_choose);
 
         database.child("users").addChildEventListener(new ChildEventListener() {
 
@@ -91,17 +91,14 @@ public class chooseRecipientActivity extends AppCompatActivity {
             }
         });
 
-        Intent stickerActivity = new Intent(getApplicationContext(), StickerSendActivity.class);
-        //add more data to intent
-        stickerActivity.putExtra("SERVER_KEY", SERVER_KEY);
-        stickerActivity.putExtra("username", username);
-        stickerActivity.putExtra("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
+        btn_choose.setOnClickListener(v -> {
+            Intent SentActivity = new Intent(getApplicationContext(), SentStickerActivity.class);
+            //add more data to intent
+            SentActivity.putExtra("SERVER_KEY", SERVER_KEY);
+            SentActivity.putExtra("username", username);
+            SentActivity.putExtra("CLIENT_REGISTRATION_TOKEN", user.CLIENT_REGISTRATION_TOKEN);
 
-        if(username.equals("")) {
-            new AlertDialog.Builder(this).setMessage("Please enter a username to login!").show();
-        }
-        else {
-            startActivity(stickerActivity);
-        }
+            startActivity(SentActivity);
+        });
     }
 }
