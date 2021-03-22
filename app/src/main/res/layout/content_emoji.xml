@@ -61,20 +61,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/img2" />
 
-    <ImageView
-        android:id="@+id/img5"
-        android:layout_width="65dp"
-        android:layout_height="54dp"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="323dp"
-        android:contentDescription="@string/img_4"
-        android:onClick="clickImg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img3"
-        app:srcCompat="@drawable/img5" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

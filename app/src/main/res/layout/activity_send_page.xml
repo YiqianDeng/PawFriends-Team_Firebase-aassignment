@@ -11,8 +11,8 @@
     <include
         android:id="@+id/include"
         layout="@layout/content_emoji"
-        android:layout_width="386dp"
-        android:layout_height="0dp"
+        android:layout_width="378dp"
+        android:layout_height="122dp"
         android:layout_marginTop="99dp"
         android:layout_marginBottom="34dp"
         app:layout_constraintBottom_toTopOf="@+id/textView"
