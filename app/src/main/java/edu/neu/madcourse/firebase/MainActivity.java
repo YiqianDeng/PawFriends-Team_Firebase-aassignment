@@ -11,6 +11,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.installations.FirebaseInstallations;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,15 +34,18 @@ public class MainActivity extends AppCompatActivity {
 
         editText = findViewById(R.id.input_username);
         Button bttn_go = findViewById(R.id.bttn_go);
-
-        //FirebaseInstanceId -> get instanceId -> get token
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(MainActivity.this, new OnSuccessListener<InstanceIdResult>() {
-            @Override
-            public void onSuccess(InstanceIdResult instanceIdResult) {
-                CLIENT_REGISTRATION_TOKEN = instanceIdResult.getToken();
-                database = FirebaseDatabase.getInstance().getReference();
-            }
-        });
+        FirebaseMessaging.getInstance ().getToken ()
+                .addOnCompleteListener ( task -> {
+                    if (!task.isSuccessful ()) {
+                        //Could not get FirebaseMessagingToken
+                        return;
+                    }
+                    if (null != task.getResult ()) {
+                        //Got FirebaseMessagingToken
+                        CLIENT_REGISTRATION_TOKEN = Objects.requireNonNull ( task.getResult () );
+                        database = FirebaseDatabase.getInstance().getReference();
+                    }
+                } );
 
         bttn_go.setOnClickListener(v -> {
             username = editText.getText().toString();
