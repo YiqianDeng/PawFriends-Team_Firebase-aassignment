@@ -10,4 +10,8 @@
     <string name="send">Send</string>
     <string name="user_list">User List</string>
     <string name="users_list">Users List</string>
+    <string name="listView">user_list_please_choose_the_user_you_want_to_sent_emoji</string>
+    <string name="choose">Choose</string>
+    <string name="sent">SENT</string>
+    <string name="selectEmojiSent">Please select the emoji you want to sent</string>
 </resources>
