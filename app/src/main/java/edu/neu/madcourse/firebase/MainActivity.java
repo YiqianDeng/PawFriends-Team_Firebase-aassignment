@@ -1,5 +1,6 @@
 package edu.neu.madcourse.firebase;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,8 +11,11 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.installations.FirebaseInstallations;
@@ -70,9 +74,22 @@ public class MainActivity extends AppCompatActivity {
         bttn_go.setOnClickListener(v -> {
             username = editText.getText().toString();
 
-            MainActivity.this.createUser(
-                    editText.getText().toString(), CLIENT_REGISTRATION_TOKEN
-            );
+            //check whether username is exist, if exist continue, else create a new user
+            database.child("users").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (!snapshot.exists()) {
+                        MainActivity.this.createUser(
+                                editText.getText().toString(), CLIENT_REGISTRATION_TOKEN
+                        );
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
 
             Intent stickerActivity = new Intent(getApplicationContext(), StickerSendActivity.class);
             //add more data to intent
