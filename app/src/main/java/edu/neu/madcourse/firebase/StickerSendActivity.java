@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class StickerSendActivity extends AppCompatActivity {
@@ -67,6 +68,7 @@ public class StickerSendActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 //update users & username list
                 user = dataSnapshot.getValue(User.class);
+                assert user != null;
                 if (!user.username.equals(username)) {
                     users.add(user);
                     usernameList.add(user.username);
@@ -77,7 +79,7 @@ public class StickerSendActivity extends AppCompatActivity {
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 user = dataSnapshot.getValue(User.class);
-                if (dataSnapshot.getKey().equalsIgnoreCase(username)) {
+                if (Objects.requireNonNull(dataSnapshot.getKey()).equalsIgnoreCase(username)) {
                     TextView textView = findViewById(R.id.textWindow);
                     //Display how many stickers a user has sent
                     textView.setText(
