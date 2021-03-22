@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <ImageView
         android:id="@+id/img4"
         android:layout_width="0dp"
@@ -31,6 +32,7 @@
         app:layout_constraintEnd_toStartOf="@+id/img4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/img4"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/img3" />
 
     <ImageView
@@ -48,8 +50,8 @@
 
     <ImageView
         android:id="@+id/img2"
-        android:layout_width="0dp"
-        android:layout_height="74dp"
+        android:layout_width="65dp"
+        android:layout_height="61dp"
         android:layout_marginTop="22dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="@string/img_4"
@@ -58,6 +60,21 @@
         app:layout_constraintStart_toEndOf="@+id/img1"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/img2" />
+
+    <ImageView
+        android:id="@+id/img5"
+        android:layout_width="65dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="323dp"
+        android:contentDescription="@string/img_4"
+        android:onClick="clickImg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img3"
+        app:srcCompat="@drawable/img5" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
