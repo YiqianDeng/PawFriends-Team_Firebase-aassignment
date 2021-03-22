@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -42,6 +43,7 @@ public class StickerSendActivity extends AppCompatActivity {
 
     private String SERVER_KEY;
     private int selectedSticker = 0;
+    private String selectedUserName = "";
 
 
     @Override
@@ -59,6 +61,13 @@ public class StickerSendActivity extends AppCompatActivity {
         usersListView.setAdapter(adapter);
 
 
+
+        usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedUserName = (String) parent.getItemAtPosition(position);
+            }
+        });
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         Button bttn_send_img = findViewById(R.id.bttn_send_img);
@@ -111,6 +120,8 @@ public class StickerSendActivity extends AppCompatActivity {
         bttn_send_img.setOnClickListener(v -> {
             if (selectedSticker == 0) {
                 new AlertDialog.Builder(this).setMessage("Please select an image").show();
+            } else if (selectedUserName == "") {
+                new AlertDialog.Builder(this).setMessage("Please select an User").show();
             } else {
                 //update the send count in database
                 updateCount(database);
@@ -118,7 +129,11 @@ public class StickerSendActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         for (User user : users) {
-                            sendMessageToSpecUser(user.CLIENT_REGISTRATION_TOKEN);
+                            if (user.username == selectedUserName) {
+                                sendMessageToSpecUser(user.CLIENT_REGISTRATION_TOKEN);
+                                selectedUserName = "";
+                            }
+
                         }
                     }
                 }).start();
@@ -169,6 +184,8 @@ public class StickerSendActivity extends AppCompatActivity {
                 break;
         }
     }
+
+
 
     // sent messsage
     public void sendMessageToSpecUser(String userToken) {

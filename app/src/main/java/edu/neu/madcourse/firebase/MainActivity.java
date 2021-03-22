@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String PREF_UNAME = "Username";
 
     private static String username;
-    private static String CLIENT_REGISTRATION_TOKEN;
+    protected static String CLIENT_REGISTRATION_TOKEN;
 
     private EditText editText;
 
