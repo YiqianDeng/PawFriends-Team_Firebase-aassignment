@@ -47,15 +47,14 @@ public class MessagingService extends FirebaseMessagingService {
 
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), Integer.parseInt(imageName));
-
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        //set notification
         Notification notification =
                 new NotificationCompat.Builder(this, "CHANNEL_ID")
                         .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
                         .setContentTitle("A New Sticker!")
                         .setContentText(messageBody)
                         .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setContentIntent(pendingIntent)
                         .setLargeIcon(bitmap)
                         .setStyle(new NotificationCompat.BigPictureStyle()
@@ -63,15 +62,13 @@ public class MessagingService extends FirebaseMessagingService {
                                 .bigLargeIcon(null))
                         .build();
 
-
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationChannel channel = new NotificationChannel("CHANNEL_ID",
-                "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT);
-        notificationManager.createNotificationChannel(channel);
-        notificationManager.notify(0 /* ID of notification */, notification);
+        NotificationChannel notificationChannel = new NotificationChannel("CHANNEL_ID",
+                "newName", NotificationManager.IMPORTANCE_DEFAULT);
+        notificationManager.createNotificationChannel(notificationChannel);
+        notificationManager.notify(0, notification);
     }
 
 }

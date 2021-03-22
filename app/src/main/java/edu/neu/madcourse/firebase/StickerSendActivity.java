@@ -7,12 +7,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,42 +41,34 @@ import java.util.Scanner;
 public class StickerSendActivity extends AppCompatActivity {
     private User user;
     private String username;
-    private final ArrayList<User> users = new ArrayList<>();
-    private final ArrayList<String> usernameList = new ArrayList<>();;
-    private ArrayAdapter<String> adapter;
-
-
     private String SERVER_KEY;
+    private final ArrayList<User> users = new ArrayList<>();
+    private final ArrayList<String> active_user_list = new ArrayList<>();;
+    private ArrayAdapter<String> adapter;
     private int selectedSticker = 0;
     private String selectedUserName = "";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_page);
+        //initial
         SERVER_KEY = getIntent().getStringExtra("SERVER_KEY");
         username = getIntent().getStringExtra("username");
-
-
-        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
-                usernameList);
-
-        ListView usersListView = findViewById(R.id.usersListView);
-        usersListView.setAdapter(adapter);
-
-
-
-        usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedUserName = (String) parent.getItemAtPosition(position);
-            }
-        });
-
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         Button bttn_send_img = findViewById(R.id.bttn_send_img);
 
+
+
+        //list view
+        ListView usersListView = findViewById(R.id.usersListView);
+        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
+                active_user_list);
+        usersListView.setAdapter(adapter);
+        usersListView.setOnItemClickListener((parent, view, position, id)
+                -> selectedUserName = (String) parent.getItemAtPosition(position));
+
+        //database
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         database.child("users").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -80,7 +77,7 @@ public class StickerSendActivity extends AppCompatActivity {
                 assert user != null;
                 if (!user.username.equals(username)) {
                     users.add(user);
-                    usernameList.add(user.username);
+                    active_user_list.add(user.username);
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -120,7 +117,7 @@ public class StickerSendActivity extends AppCompatActivity {
         bttn_send_img.setOnClickListener(v -> {
             if (selectedSticker == 0) {
                 new AlertDialog.Builder(this).setMessage("Please select an image").show();
-            } else if (selectedUserName == "") {
+            } else if (selectedUserName.equals("")) {
                 new AlertDialog.Builder(this).setMessage("Please select an User").show();
             } else {
                 //update the send count in database
@@ -129,11 +126,10 @@ public class StickerSendActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         for (User user : users) {
-                            if (user.username == selectedUserName) {
+                            if (user.username.equals(selectedUserName)) {
                                 sendMessageToSpecUser(user.CLIENT_REGISTRATION_TOKEN);
                                 selectedUserName = "";
                             }
-
                         }
                     }
                 }).start();
@@ -187,51 +183,60 @@ public class StickerSendActivity extends AppCompatActivity {
 
 
 
-    // sent messsage
+    // sent message
     public void sendMessageToSpecUser(String userToken) {
-        JSONObject jPayload = new JSONObject();
-        JSONObject jNotification = new JSONObject();
-        JSONObject jdata = new JSONObject();
+        JSONObject payload = new JSONObject();
+        JSONObject notification = new JSONObject();
+        JSONObject data = new JSONObject();
 
         try {
-            jNotification.put("title", "A new sticker!");
-            jNotification.put("body", "You received a new sticker from " + username);
-            jNotification.put("sound", "default");
-            jNotification.put("badge", "1");
-            jNotification.put("tag", "" + selectedSticker);
+            notification.put("title", "A new sticker!");
+            notification.put("body", "You received a new sticker from " + username);
+            notification.put("sound", "default");
+            notification.put("badge", "1");
+            notification.put("tag", "" + selectedSticker);
 
             // Populate the Payload object.
             // Note that "to" is a topic, not a token representing an app instance
-            jdata.put("title", "data title");
-            jdata.put("content", "data content");
-            jdata.put("image", "" + selectedSticker);
+            data.put("title", "data title");
+            data.put("content", "data content");
+            data.put("image", "" + selectedSticker);
 
 
             // send to specific user
-            jPayload.put("to", userToken);
-            jPayload.put("priority", "high");
-            jPayload.put("notification", jNotification);
-            jPayload.put("data", jdata);
+            payload.put("to", userToken);
+            payload.put("priority", "high");
+            payload.put("notification", notification);
+            payload.put("data", data);
 
 
             // Open the HTTP connection and send the payload
             URL url = new URL("https://fcm.googleapis.com/fcm/send");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Authorization", SERVER_KEY);
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setDoOutput(true);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Authorization", SERVER_KEY);
+            httpURLConnection.setRequestProperty("Content-Type", "application/json");
+            httpURLConnection.setDoOutput(true);
 
             // Send FCM message content.
-            OutputStream outputStream = conn.getOutputStream();
-            outputStream.write(jPayload.toString().getBytes());
+            OutputStream outputStream = httpURLConnection.getOutputStream();
+            outputStream.write(payload.toString().getBytes());
             outputStream.close();
 
             // Read FCM response.
-            InputStream inputStream = conn.getInputStream();
+            InputStream inputStream = httpURLConnection.getInputStream();
             final String resp = convertStreamToString(inputStream);
+            Handler h = new Handler(Looper.getMainLooper());
+//            h.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Log.e(TAG, "run: " + resp);
+//                    Toast.makeText(FCMActivity.this,"response was: " + resp,Toast.LENGTH_LONG).show();
+//                }
+//            });
 
         } catch (JSONException | IOException e) {
+//            Log.e(TAG,"sendMessageToNews threw error",e);
             e.printStackTrace();
         }
 
