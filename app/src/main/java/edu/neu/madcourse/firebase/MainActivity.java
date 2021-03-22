@@ -14,7 +14,6 @@ import com.google.firebase.iid.InstanceIdResult;
 
 public class MainActivity extends AppCompatActivity {
 
-
     //server key from firebase console
     private static final String SERVER_KEY = "key=AAAAejI3rJU:APA91bFnp3D9yh58tw5nCYk66Wi1AFF7rdMVMj6WmF-r-VQ-LFq6If3sLW84jw5Uz4b5oM4o4R48qiPaB-L8R8JYx7rQS2Tv7n_waoxVCFgxnKrUiKryRMQ0uortWJfHVb06Tl5tO_ET";
     private DatabaseReference database;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                     editText.getText().toString(), CLIENT_REGISTRATION_TOKEN
             );
 
-            Intent stickerActivity = new Intent(getApplicationContext(), UserListActivity.class);
+            Intent stickerActivity = new Intent(getApplicationContext(), StickerSendActivity.class);
             //add more data to intent
             stickerActivity.putExtra("SERVER_KEY", SERVER_KEY);
             stickerActivity.putExtra("username", username);

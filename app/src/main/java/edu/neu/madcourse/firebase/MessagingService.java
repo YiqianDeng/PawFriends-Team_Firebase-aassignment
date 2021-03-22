@@ -47,7 +47,7 @@ public class MessagingService extends FirebaseMessagingService {
      *
      */
     private void showNotification(String messageBody, String imageName) {
-        Intent intent = new Intent(this, ReceivedActivity.class);
+        Intent intent = new Intent(this, StickerReceivedActivity.class);
         intent.putExtra("sticker", imageName);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

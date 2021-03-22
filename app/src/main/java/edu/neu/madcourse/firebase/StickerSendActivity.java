@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -32,12 +31,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class UserListActivity extends AppCompatActivity {
+public class StickerSendActivity extends AppCompatActivity {
     private User user;
     private String username;
     private final ArrayList<User> users = new ArrayList<>();
+    private final ArrayList<String> usernameList = new ArrayList<>();;
     private ArrayAdapter<String> adapter;
-    private final ArrayList<String> userNameList = new ArrayList<>();;
+
 
     private String SERVER_KEY;
     private int selectedSticker = 0;
@@ -46,25 +46,30 @@ public class UserListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_emoji);
+        setContentView(R.layout.activity_send_page);
         SERVER_KEY = getIntent().getStringExtra("SERVER_KEY");
         username = getIntent().getStringExtra("username");
 
+
         adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
-                userNameList);
+                usernameList);
+
         ListView usersListView = findViewById(R.id.usersListView);
         usersListView.setAdapter(adapter);
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
+
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         Button bttn_send_img = findViewById(R.id.bttn_send_img);
 
         database.child("users").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //update users & username list
                 user = dataSnapshot.getValue(User.class);
                 if (!user.username.equals(username)) {
                     users.add(user);
-                    userNameList.add(user.username);
+                    usernameList.add(user.username);
                     adapter.notifyDataSetChanged();
                 }
             }
