@@ -2,7 +2,10 @@ package edu.neu.madcourse.firebase;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,10 +25,26 @@ public class MainActivity extends AppCompatActivity {
     private static final String SERVER_KEY = "key=AAAAejI3rJU:APA91bFnp3D9yh58tw5nCYk66Wi1AFF7rdMVMj6WmF-r-VQ-LFq6If3sLW84jw5Uz4b5oM4o4R48qiPaB-L8R8JYx7rQS2Tv7n_waoxVCFgxnKrUiKryRMQ0uortWJfHVb06Tl5tO_ET";
     private DatabaseReference database;
 
+    private static final String PREFS_NAME = "preferences";
+    private static final String PREF_UNAME = "Username";
+
     private static String username;
     private static String CLIENT_REGISTRATION_TOKEN;
 
     private EditText editText;
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        savePreferences();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadPreferences();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } );
 
+
         bttn_go.setOnClickListener(v -> {
             username = editText.getText().toString();
 
@@ -60,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
             stickerActivity.putExtra("username", username);
             stickerActivity.putExtra("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
 
-
-            //TODO: login by history
             if(username.equals("")) {
                 new AlertDialog.Builder(this).setMessage("Please enter a username to login!").show();
             }
@@ -79,4 +97,26 @@ public class MainActivity extends AppCompatActivity {
         database.child("users").child(username).setValue(user);
     }
 
+    /**
+     * Citation: https://stackoverflow.com/questions/21697172/android-how-to-save-user-name-and-password-after-the-app-is-closed
+     */
+    private void savePreferences() {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        // Edit and commit
+        username = editText.getText().toString();
+        editor.putString(PREF_UNAME, username);
+        editor.apply();
+    }
+
+    private void loadPreferences() {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        // Get value
+        String defaultUnameValue = "";
+        username = settings.getString(PREF_UNAME, defaultUnameValue);
+        editText.setText(username);
+    }
 }
