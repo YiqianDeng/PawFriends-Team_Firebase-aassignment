@@ -18,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -25,7 +26,7 @@ public class chooseRecipientActivity extends AppCompatActivity {
 
     private User user;
     private String username;
-    private final ArrayList<User> users = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
     private final ArrayList<String> usernameList = new ArrayList<>();;
     private ArrayAdapter<String> adapter;
 
@@ -97,6 +98,8 @@ public class chooseRecipientActivity extends AppCompatActivity {
             SentActivity.putExtra("SERVER_KEY", SERVER_KEY);
             SentActivity.putExtra("username", username);
             SentActivity.putExtra("CLIENT_REGISTRATION_TOKEN", user.CLIENT_REGISTRATION_TOKEN);
+            SentActivity.putExtra("users", users);
+            SentActivity.putExtra("database", (Serializable) database);
 
             startActivity(SentActivity);
         });
