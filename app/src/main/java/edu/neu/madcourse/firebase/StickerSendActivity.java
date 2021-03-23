@@ -6,17 +6,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -39,11 +34,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -152,8 +145,7 @@ public class StickerSendActivity extends AppCompatActivity {
                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                             .permitAll().build();
                     StrictMode.setThreadPolicy(policy);
-                    //your codes here
-                    if (isNetworkOnline4()) {
+                    if (isNetworkOnline()) {
                         //update the send count in database
                         updateCount(database);
                         new Thread(new Runnable() {
@@ -293,7 +285,7 @@ public class StickerSendActivity extends AppCompatActivity {
     }
 
 
-    public static boolean isNetworkOnline4() {
+    public static boolean isNetworkOnline() {
         boolean isOnline = false;
         try {
             Socket socket = new Socket();
