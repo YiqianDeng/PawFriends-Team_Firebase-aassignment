@@ -10,9 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
+import android.os.StrictMode;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -35,6 +34,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -138,20 +139,34 @@ public class StickerSendActivity extends AppCompatActivity {
             } else if (selectedUserName.equals("")) {
                 new AlertDialog.Builder(this).setMessage("Please select an User").show();
             } else {
-                //update the send count in database
-                updateCount(database);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (User user : users) {
-                            if (user.username.equals(selectedUserName)) {
-                                sendHistory.put(user.username, selectedSticker);
-                                sendMessageToSpecUser(user.CLIENT_REGISTRATION_TOKEN);
-                                selectedUserName = "";
+                int SDK_INT = android.os.Build.VERSION.SDK_INT;
+                if (SDK_INT > 8)
+                {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                            .permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+                    if (isNetworkOnline()) {
+                        //update the send count in database
+                        updateCount(database);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (User user : users) {
+                                    if (user.username.equals(selectedUserName)) {
+                                        sendHistory.put(user.username, selectedSticker);
+                                        sendMessageToSpecUser(user.CLIENT_REGISTRATION_TOKEN);
+                                        selectedUserName = "";
+                                    }
+                                }
                             }
-                        }
+                        }).start();
+
+                }else {
+                        Toast.makeText(getApplicationContext(), "Connection Error", Toast.LENGTH_LONG).show();
                     }
-                }).start();
+
+                }
+
             }
         });
 
@@ -267,6 +282,21 @@ public class StickerSendActivity extends AppCompatActivity {
     private String convertStreamToString(InputStream is) {
         Scanner s = new Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next().replace(",", ",\n") : "";
+    }
+
+
+    public static boolean isNetworkOnline() {
+        boolean isOnline = false;
+        try {
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress("8.8.8.8", 53), 3000);
+            // socket.connect(new InetSocketAddress("114.114.114.114", 53), 3000);
+            isOnline = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return isOnline;
     }
 }
 
