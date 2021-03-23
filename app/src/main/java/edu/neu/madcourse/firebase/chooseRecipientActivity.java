@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -20,6 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static edu.neu.madcourse.firebase.MainActivity.CLIENT_REGISTRATION_TOKEN;
@@ -32,8 +36,9 @@ public class chooseRecipientActivity extends AppCompatActivity {
     private final ArrayList<User> users = new ArrayList<>();
     private final ArrayList<String> active_user_list = new ArrayList<>();;
     private ArrayAdapter<String> adapter;
-    private int selectedSticker = 0;
     private String selectedUserName = "";
+    private final Map<String, Integer> sendHistory = new HashMap<>();
+    private final String TAG = "chooseRecipientActivity";
 
 
     @Override
@@ -47,6 +52,18 @@ public class chooseRecipientActivity extends AppCompatActivity {
         Button btn_choose = findViewById(R.id.btn_choose);
 
 
+        //go to history
+        Button bttn_history = findViewById(R.id.bttn_history);
+        bttn_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(chooseRecipientActivity.this, HistoryActivity.class);
+                intent.putExtra("map", (Serializable) sendHistory);
+                startActivity(intent);
+            }
+        });
+
+
         // listview
         ListView usersListView = findViewById(R.id.listView);
         adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
@@ -54,6 +71,8 @@ public class chooseRecipientActivity extends AppCompatActivity {
         usersListView.setAdapter(adapter);
         usersListView.setOnItemClickListener((parent, view, position, id)
                 -> selectedUserName = (String) parent.getItemAtPosition(position));
+        TextView display = findViewById(R.id.textView2);
+
 
         // database
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
@@ -65,6 +84,8 @@ public class chooseRecipientActivity extends AppCompatActivity {
                 assert user != null;
                 if (!user.username.equals(username)) {
                     users.add(user);
+                    int i = 0;
+                    Log.d(TAG, "onChildAdded: "+user.username);
                     active_user_list.add(user.username);
                     adapter.notifyDataSetChanged();
                 }

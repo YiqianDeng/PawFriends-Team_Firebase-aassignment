@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -43,7 +42,7 @@ public class SentStickerActivity extends AppCompatActivity {
     private final ArrayList<String> active_user_list = new ArrayList<>();
     private int selectedSticker = 0;
     private String selectedUserName;
-
+//    private String userID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,7 +165,7 @@ public class SentStickerActivity extends AppCompatActivity {
                 selectedSticker = R.drawable.img3;
                 break;
             case R.id.img4:
-                selectedSticker = R.drawable.img4;
+                selectedSticker = R.drawable.img3;
                 break;
         }
     }

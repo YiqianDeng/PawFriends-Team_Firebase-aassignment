@@ -10,14 +10,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -85,6 +82,7 @@ public class StickerSendActivity extends AppCompatActivity {
                 -> selectedUserName = (String) parent.getItemAtPosition(position));
 
 
+
         //database
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         database.child("users").addChildEventListener(new ChildEventListener() {
@@ -131,7 +129,7 @@ public class StickerSendActivity extends AppCompatActivity {
             }
         });
 
-        // select image
+        // send image
         bttn_send_img.setOnClickListener(v -> {
             if (selectedSticker == 0) {
                 new AlertDialog.Builder(this).setMessage("Please select an image").show();
@@ -195,7 +193,7 @@ public class StickerSendActivity extends AppCompatActivity {
                 selectedSticker = R.drawable.img3;
                 break;
             case R.id.img4:
-                selectedSticker = R.drawable.img4;
+                selectedSticker = R.drawable.img3;
                 break;
         }
     }
@@ -246,24 +244,16 @@ public class StickerSendActivity extends AppCompatActivity {
             InputStream inputStream = httpURLConnection.getInputStream();
             final String resp = convertStreamToString(inputStream);
             Handler h = new Handler(Looper.getMainLooper());
-//            h.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Log.e(TAG, "run: " + resp);
-//                    Toast.makeText(FCMActivity.this,"response was: " + resp,Toast.LENGTH_LONG).show();
-//                }
-//            });
+
 
         } catch (JSONException | IOException e) {
-//            Log.e(TAG,"sendMessageToNews threw error",e);
+
             e.printStackTrace();
         }
 
     }
 
-    /**
-     * Helper function.
-     */
+    // helper
     private String convertStreamToString(InputStream is) {
         Scanner s = new Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next().replace(",", ",\n") : "";

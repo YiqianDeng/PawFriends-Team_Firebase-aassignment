@@ -37,7 +37,7 @@ public class HistoryActivity extends AppCompatActivity {
             img_name = "emoji_2";
         } else if (value == R.drawable.img3) {
             img_name = "emoji_3";
-        } else if (value == R.drawable.img4) {
+        } else if (value == R.drawable.img3) {
             img_name = "emoji_4";
         }
         return img_name;
