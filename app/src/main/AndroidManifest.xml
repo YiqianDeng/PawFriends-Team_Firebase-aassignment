@@ -9,9 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Firebase">
-        <activity android:name=".SentStickerActivity"></activity>
+        <activity android:name=".SentStickerActivity" />
         <activity android:name=".chooseRecipientActivity" />
         <activity android:name=".StickerReceivedActivity" />
+        <activity android:name=".HistoryActivity"/>
         <activity android:name=".StickerSendActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

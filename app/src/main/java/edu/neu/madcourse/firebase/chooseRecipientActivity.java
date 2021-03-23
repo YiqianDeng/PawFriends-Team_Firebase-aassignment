@@ -22,6 +22,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static edu.neu.madcourse.firebase.MainActivity.CLIENT_REGISTRATION_TOKEN;
+
 public class chooseRecipientActivity extends AppCompatActivity {
 
     private User user;

@@ -8,7 +8,7 @@ public class User {
     public String username;
     public String CLIENT_REGISTRATION_TOKEN;
     public Integer sentCount;
-    public ArrayList<String> receivedHistory;
+    public ArrayList<String> sendHistory;
 
     public User() {}
 
@@ -16,6 +16,6 @@ public class User {
         this.username = username;
         this.CLIENT_REGISTRATION_TOKEN = CLIENT_REGISTRATION_TOKEN;
         this.sentCount = 0;
-        this.receivedHistory = new ArrayList<>();
+        this.sendHistory = new ArrayList<>();
     }
 }
