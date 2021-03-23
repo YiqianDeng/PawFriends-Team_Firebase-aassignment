@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -53,6 +54,7 @@ public class StickerSendActivity extends AppCompatActivity {
     private int selectedSticker = 0;
     private String selectedUserName = "";
     private final Map<String, Integer> sendHistory = new HashMap<>();
+    private final String TAG = "StickerSentActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,8 @@ public class StickerSendActivity extends AppCompatActivity {
         //initial
         SERVER_KEY = getIntent().getStringExtra("SERVER_KEY");
         username = getIntent().getStringExtra("username");
+        int i = 0;
+        Log.d(TAG, username.toString());
         Button bttn_send_img = findViewById(R.id.bttn_send_img);
 
 
@@ -211,7 +215,7 @@ public class StickerSendActivity extends AppCompatActivity {
                 selectedSticker = R.drawable.img3;
                 break;
             case R.id.img4:
-                selectedSticker = R.drawable.img3;
+                selectedSticker = R.drawable.img4;
                 break;
         }
     }

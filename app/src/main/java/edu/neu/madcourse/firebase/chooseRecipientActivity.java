@@ -37,7 +37,7 @@ public class chooseRecipientActivity extends AppCompatActivity {
     private final ArrayList<String> active_user_list = new ArrayList<>();;
     private ArrayAdapter<String> adapter;
     private String selectedUserName = "";
-    private final Map<String, Integer> sendHistory = new HashMap<>();
+//    private final Map<String, Integer> sendHistory = new HashMap<>();
     private final String TAG = "chooseRecipientActivity";
 
 
@@ -52,16 +52,16 @@ public class chooseRecipientActivity extends AppCompatActivity {
         Button btn_choose = findViewById(R.id.btn_choose);
 
 
-        //go to history
-        Button bttn_history = findViewById(R.id.bttn_history);
-        bttn_history.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(chooseRecipientActivity.this, HistoryActivity.class);
-                intent.putExtra("map", (Serializable) sendHistory);
-                startActivity(intent);
-            }
-        });
+//        //go to history
+//        Button bttn_history = findViewById(R.id.bttn_history);
+//        bttn_history.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(chooseRecipientActivity.this, HistoryActivity.class);
+//                intent.putExtra("map", (Serializable) sendHistory);
+//                startActivity(intent);
+//            }
+//        });
 
 
         // listview
@@ -71,6 +71,8 @@ public class chooseRecipientActivity extends AppCompatActivity {
         usersListView.setAdapter(adapter);
         usersListView.setOnItemClickListener((parent, view, position, id)
                 -> selectedUserName = (String) parent.getItemAtPosition(position));
+//        int i = 0;
+//        Log.d(TAG, selectedUserName.toString());
         TextView display = findViewById(R.id.textView2);
 
 
