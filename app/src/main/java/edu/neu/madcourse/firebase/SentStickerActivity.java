@@ -7,12 +7,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
@@ -25,31 +31,85 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class SentStickerActivity extends AppCompatActivity {
-    private int selectedSticker = 0;
 
+    private User user;
     private String SERVER_KEY;
     private String username;
-    private ArrayList<User> users;
-    DatabaseReference database;
+    private final ArrayList<User> users = new ArrayList<>();
+    private final ArrayList<String> active_user_list = new ArrayList<>();
+    private int selectedSticker = 0;
+    private String selectedUserName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sent_sticker);
 
+        // init
         SERVER_KEY = getIntent().getStringExtra("SERVER_KEY");
         username = getIntent().getStringExtra("username");
-        database = (DatabaseReference) getIntent().getSerializableExtra("database");
-        users = (ArrayList<User>) getIntent().getSerializableExtra("users");
-
+        selectedUserName = getIntent().getStringExtra("selectedUserName");
         Button btn_sent = findViewById(R.id.btn_sent);
 
+
+        // database
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        database.child("users").addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//                user = snapshot.getValue(User.class);
+//                assert user != null;
+//                if (!user.username.equals(username)) {
+//                    users.add(user);
+//                    active_user_list.add(user.username);
+//                    adapter.notifyDataSetChanged();
+//                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                user = snapshot.getValue(User.class);
+                if (Objects.requireNonNull(snapshot.getKey()).equalsIgnoreCase(username)) {
+                    TextView textView = findViewById(R.id.textWindow);
+
+                    //Display how many stickers a user has sent
+                    textView.setText(
+                            String.format("%s" + " has sent %s stickers!", user.username, user.sentCount)
+                    );
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+//        TextView display = findViewById(R.id.selectEmoji);
+//        display.setText("enter successful");
+
+        // select image
         btn_sent.setOnClickListener(v -> {
             if (selectedSticker == 0) {
                 new AlertDialog.Builder(this).setMessage("Please select an image").show();
+            } else if (selectedUserName.equals("")) {
+                new AlertDialog.Builder(this).setMessage("Please select an User").show();
             } else {
                 //update the send count in database
                 updateCount(database);
@@ -57,7 +117,10 @@ public class SentStickerActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         for (User user : users) {
-                            sendMessageToSpecUser(user.CLIENT_REGISTRATION_TOKEN);
+                            if (user.username.equals(selectedUserName)) {
+                                sendMessageToSpecUser(user.CLIENT_REGISTRATION_TOKEN);
+                                selectedUserName = "";
+                            }
                         }
                     }
                 }).start();
@@ -108,51 +171,60 @@ public class SentStickerActivity extends AppCompatActivity {
         }
     }
 
-    // sent messsage
+    // sent message
     public void sendMessageToSpecUser(String userToken) {
-        JSONObject jPayload = new JSONObject();
-        JSONObject jNotification = new JSONObject();
-        JSONObject jdata = new JSONObject();
+        JSONObject payload = new JSONObject();
+        JSONObject notification = new JSONObject();
+        JSONObject data = new JSONObject();
 
         try {
-            jNotification.put("title", "A new sticker!");
-            jNotification.put("body", "You received a new sticker from " + username);
-            jNotification.put("sound", "default");
-            jNotification.put("badge", "1");
-            jNotification.put("tag", "" + selectedSticker);
+            notification.put("title", "A new sticker!");
+            notification.put("body", "You received a new sticker from " + username);
+            notification.put("sound", "default");
+            notification.put("badge", "1");
+            notification.put("tag", "" + selectedSticker);
 
             // Populate the Payload object.
             // Note that "to" is a topic, not a token representing an app instance
-            jdata.put("title", "data title");
-            jdata.put("content", "data content");
-            jdata.put("image", "" + selectedSticker);
+            data.put("title", "data title");
+            data.put("content", "data content");
+            data.put("image", "" + selectedSticker);
 
 
             // send to specific user
-            jPayload.put("to", userToken);
-            jPayload.put("priority", "high");
-            jPayload.put("notification", jNotification);
-            jPayload.put("data", jdata);
+            payload.put("to", userToken);
+            payload.put("priority", "high");
+            payload.put("notification", notification);
+            payload.put("data", data);
 
 
             // Open the HTTP connection and send the payload
             URL url = new URL("https://fcm.googleapis.com/fcm/send");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Authorization", SERVER_KEY);
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setDoOutput(true);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Authorization", SERVER_KEY);
+            httpURLConnection.setRequestProperty("Content-Type", "application/json");
+            httpURLConnection.setDoOutput(true);
 
             // Send FCM message content.
-            OutputStream outputStream = conn.getOutputStream();
-            outputStream.write(jPayload.toString().getBytes());
+            OutputStream outputStream = httpURLConnection.getOutputStream();
+            outputStream.write(payload.toString().getBytes());
             outputStream.close();
 
             // Read FCM response.
-            InputStream inputStream = conn.getInputStream();
+            InputStream inputStream = httpURLConnection.getInputStream();
             final String resp = convertStreamToString(inputStream);
+            Handler h = new Handler(Looper.getMainLooper());
+//            h.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Log.e(TAG, "run: " + resp);
+//                    Toast.makeText(FCMActivity.this,"response was: " + resp,Toast.LENGTH_LONG).show();
+//                }
+//            });
 
         } catch (JSONException | IOException e) {
+//            Log.e(TAG,"sendMessageToNews threw error",e);
             e.printStackTrace();
         }
 
