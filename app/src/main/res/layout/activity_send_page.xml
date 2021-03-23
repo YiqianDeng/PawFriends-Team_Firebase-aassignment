@@ -12,10 +12,10 @@
         android:id="@+id/include"
         layout="@layout/content_emoji"
         android:layout_width="378dp"
-        android:layout_height="122dp"
+        android:layout_height="0dp"
         android:layout_marginTop="99dp"
-        android:layout_marginBottom="34dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        android:layout_marginBottom="429dp"
+        app:layout_constraintBottom_toTopOf="@+id/bttn_history"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.872"
         app:layout_constraintStart_toStartOf="parent"
@@ -76,6 +76,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/usersListView"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
+
+    <Button
+        android:id="@+id/bttn_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginBottom="17dp"
+        android:text="history"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/bttn_send_img"
         app:layout_constraintTop_toBottomOf="@+id/include" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

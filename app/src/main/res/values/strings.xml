@@ -14,4 +14,9 @@
     <string name="choose">Choose</string>
     <string name="sent">SENT</string>
     <string name="selectEmojiSent">Please select the emoji you want to sent</string>
+    <string name="send_history">Send History</string>
+    <string name="emoji_2">emoji_2</string>
+    <string name="emoji_1">emoji_1</string>
+    <string name="emoji_3">emoji_3</string>
+    <string name="emoji_4">emoji_4</string>
 </resources>

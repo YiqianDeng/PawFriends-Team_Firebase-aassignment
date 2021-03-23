@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -32,9 +33,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -47,6 +51,7 @@ public class StickerSendActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
     private int selectedSticker = 0;
     private String selectedUserName = "";
+    private final Map<String, Integer> sendHistory = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,19 @@ public class StickerSendActivity extends AppCompatActivity {
         SERVER_KEY = getIntent().getStringExtra("SERVER_KEY");
         username = getIntent().getStringExtra("username");
         Button bttn_send_img = findViewById(R.id.bttn_send_img);
+
+
+        //go to history
+        Button bttn_history = findViewById(R.id.bttn_history);
+        bttn_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StickerSendActivity.this, HistoryActivity.class);
+                intent.putExtra("map", (Serializable) sendHistory);
+                startActivity(intent);
+            }
+        });
+
 
 
 
@@ -127,6 +145,7 @@ public class StickerSendActivity extends AppCompatActivity {
                     public void run() {
                         for (User user : users) {
                             if (user.username.equals(selectedUserName)) {
+                                sendHistory.put(user.username, selectedSticker);
                                 sendMessageToSpecUser(user.CLIENT_REGISTRATION_TOKEN);
                                 selectedUserName = "";
                             }
