@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,7 +27,7 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     //server key from firebase console
-    private static final String SERVER_KEY = "key=AAAAejI3rJU:APA91bFnp3D9yh58tw5nCYk66Wi1AFF7rdMVMj6WmF-r-VQ-LFq6If3sLW84jw5Uz4b5oM4o4R48qiPaB-L8R8JYx7rQS2Tv7n_waoxVCFgxnKrUiKryRMQ0uortWJfHVb06Tl5tO_ET";
+    private static final String SERVER_KEY = "key=AAAAejI3rJU:APA91bFfoP1QPWOKjRzN8r3OeLIZsNPitrT-EzAF5dBWW-RxsP4Tg3ypzPaN8dasnmFKt2lfU1I_JRsLvSSHTJ4EF0Fs1uDEAhbpl4edeHPdLzZHgXu45H3zJesdps3cuRsxMwZI6P56";
     private DatabaseReference database;
 
     private static final String PREFS_NAME = "preferences";
@@ -57,18 +58,24 @@ public class MainActivity extends AppCompatActivity {
 
         editText = findViewById(R.id.input_username);
         Button bttn_go = findViewById(R.id.bttn_go);
-        FirebaseMessaging.getInstance ().getToken ()
-                .addOnCompleteListener ( task -> {
-                    if (!task.isSuccessful ()) {
-                        //Could not get FirebaseMessagingToken
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                CLIENT_REGISTRATION_TOKEN = instanceIdResult.getToken();
+            }
+        });
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener( task -> {
+                    if(!task.isSuccessful()) {
                         return;
                     }
-                    if (null != task.getResult ()) {
-                        //Got FirebaseMessagingToken
-                        CLIENT_REGISTRATION_TOKEN = Objects.requireNonNull ( task.getResult () );
+                    if(null != task.getResult()) {
                         database = FirebaseDatabase.getInstance().getReference();
                     }
-                } );
+                });
+
+
+
 
 
         bttn_go.setOnClickListener(v -> {
@@ -109,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             chooseActivity.putExtra("SERVER_KEY", SERVER_KEY);
             chooseActivity.putExtra("username", username);
             chooseActivity.putExtra("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
+
 
             if(username.equals("")) {
                 new AlertDialog.Builder(this).setMessage("Please enter a username to login!").show();

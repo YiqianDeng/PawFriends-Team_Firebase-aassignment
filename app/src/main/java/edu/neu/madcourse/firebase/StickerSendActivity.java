@@ -64,8 +64,8 @@ public class StickerSendActivity extends AppCompatActivity {
         //initial
         SERVER_KEY = getIntent().getStringExtra("SERVER_KEY");
         username = getIntent().getStringExtra("username");
-        int i = 0;
-        Log.d(TAG, username.toString());
+//        int i = 0;
+//        Log.d(TAG, username.toString());
         Button bttn_send_img = findViewById(R.id.bttn_send_img);
 
 
@@ -166,7 +166,7 @@ public class StickerSendActivity extends AppCompatActivity {
                             }
                         }).start();
 
-                }else {
+                    }else {
                         Toast.makeText(getApplicationContext(), "Connection Error", Toast.LENGTH_LONG).show();
                     }
 

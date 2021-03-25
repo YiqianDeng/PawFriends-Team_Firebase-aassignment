@@ -47,12 +47,13 @@ public class SentStickerActivity extends AppCompatActivity {
     private User user;
     private String SERVER_KEY;
     private String username;
-    private final ArrayList<User> users = new ArrayList<>();
-    private final ArrayList<String> active_user_list = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
+    private ArrayList<String> active_user_list = new ArrayList<>();
     private int selectedSticker = 0;
     private String selectedUserName;
-    private final Map<String, Integer> sendHistory = new HashMap<>();
-//    private String userID = "";
+    private String CLIENT_REGISTRATION_TOKEN;
+    private Map<String, Integer> sendHistory = new HashMap<>();
+    //    private String userID = "";
     private final String TAG = "SentStickerActivity";
 
     @Override
@@ -64,9 +65,10 @@ public class SentStickerActivity extends AppCompatActivity {
         SERVER_KEY = getIntent().getStringExtra("SERVER_KEY");
         username = getIntent().getStringExtra("username");
         selectedUserName = getIntent().getStringExtra("selectedUserName");
-//        int i = 0;
-//        Log.d(TAG, selectedUserName.toString());
-//        Log.d(TAG, username.toString());
+        CLIENT_REGISTRATION_TOKEN = getIntent().getStringExtra("CLIENT_REGISTRATION_TOKEN");
+
+
+
         Button btn_sent = findViewById(R.id.btn_sent);
 
         //go to history
@@ -102,7 +104,7 @@ public class SentStickerActivity extends AppCompatActivity {
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 user = snapshot.getValue(User.class);
                 if (Objects.requireNonNull(snapshot.getKey()).equalsIgnoreCase(username)) {
-                    TextView textView = findViewById(R.id.textWindow);
+                    TextView textView = findViewById(R.id.selectEmoji);
 
                     //Display how many stickers a user has sent
                     textView.setText(
@@ -152,6 +154,7 @@ public class SentStickerActivity extends AppCompatActivity {
                                 for (User user : users) {
                                     if (user.username.equals(selectedUserName)) {
                                         sendHistory.put(user.username, selectedSticker);
+
                                         sendMessageToSpecUser(user.CLIENT_REGISTRATION_TOKEN);
                                         selectedUserName = "";
                                     }
@@ -230,6 +233,8 @@ public class SentStickerActivity extends AppCompatActivity {
             // Note that "to" is a topic, not a token representing an app instance
             data.put("title", "data title");
             data.put("content", "data content");
+
+
             data.put("image", "" + selectedSticker);
 
 
@@ -256,8 +261,15 @@ public class SentStickerActivity extends AppCompatActivity {
             // Read FCM response.
             InputStream inputStream = httpURLConnection.getInputStream();
             final String resp = convertStreamToString(inputStream);
-            Handler h = new Handler(Looper.getMainLooper());
+            int i =0 ;
+            Handler handler = new Handler(Looper.getMainLooper());
 
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), resp, Toast.LENGTH_LONG).show();
+                }
+            });
 
         } catch (JSONException | IOException e) {
             e.printStackTrace();

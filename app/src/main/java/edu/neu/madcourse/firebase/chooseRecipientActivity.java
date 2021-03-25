@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static edu.neu.madcourse.firebase.MainActivity.CLIENT_REGISTRATION_TOKEN;
-
 public class chooseRecipientActivity extends AppCompatActivity {
 
     private User user;
@@ -37,7 +35,7 @@ public class chooseRecipientActivity extends AppCompatActivity {
     private final ArrayList<String> active_user_list = new ArrayList<>();;
     private ArrayAdapter<String> adapter;
     private String selectedUserName = "";
-//    private final Map<String, Integer> sendHistory = new HashMap<>();
+    //    private final Map<String, Integer> sendHistory = new HashMap<>();
     private final String TAG = "chooseRecipientActivity";
 
 
@@ -95,15 +93,15 @@ public class chooseRecipientActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                user = snapshot.getValue(User.class);
-                if (Objects.requireNonNull(snapshot.getKey()).equalsIgnoreCase(username)) {
-                    TextView textView = findViewById(R.id.textWindow);
-
-                    //Display how many stickers a user has sent
-                    textView.setText(
-                            String.format("%s" + " has sent %s stickers!", user.username, user.sentCount)
-                    );
-                }
+//                user = snapshot.getValue(User.class);
+//                if (Objects.requireNonNull(snapshot.getKey()).equalsIgnoreCase(username)) {
+//                    TextView textView = findViewById(R.id.textWindow);
+//
+//                    //Display how many stickers a user has sent
+//                    textView.setText(
+//                            String.format("%s" + " has sent %s stickers!", user.username, user.sentCount)
+//                    );
+//                }
             }
 
             @Override
