@@ -103,18 +103,6 @@ public class MainActivity extends AppCompatActivity {
             else {
                 startActivity(stickerActivity);
             }
-//            Intent chooseActivity = new Intent(getApplicationContext(), chooseRecipientActivity.class);
-//            // pass data to next activity
-//            chooseActivity.putExtra("SERVER_KEY", SERVER_KEY);
-//            chooseActivity.putExtra("username", username);
-//            chooseActivity.putExtra("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
-//
-//            if(username.equals("")) {
-//                new AlertDialog.Builder(this).setMessage("Please enter a username to login!").show();
-//            }
-//            else {
-//                startActivity(chooseActivity);
-//            }
         });
 
     }
