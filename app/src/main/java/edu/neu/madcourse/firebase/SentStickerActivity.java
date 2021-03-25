@@ -90,8 +90,7 @@ public class SentStickerActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 user = snapshot.getValue(User.class);
-//                int i = 0;
-//                Log.d(TAG, user.toString());
+
                 assert user != null;
                 if (!user.username.equals(username)) {
                     users.add(user);

@@ -267,7 +267,6 @@ public class StickerSendActivity extends AppCompatActivity {
             final String resp = convertStreamToString(inputStream);
             Handler h = new Handler(Looper.getMainLooper());
 
-
         } catch (JSONException | IOException e) {
 
             e.printStackTrace();

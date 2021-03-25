@@ -98,18 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-//            Intent stickerActivity = new Intent(getApplicationContext(), StickerSendActivity.class);
-//            //add more data to intent
-//            stickerActivity.putExtra("SERVER_KEY", SERVER_KEY);
-//            stickerActivity.putExtra("username", username);
-//            stickerActivity.putExtra("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
-//
-//            if(username.equals("")) {
-//                new AlertDialog.Builder(this).setMessage("Please enter a username to login!").show();
-//            }
-//            else {
-//                startActivity(stickerActivity);
-//            }
+
 
             Intent chooseActivity = new Intent(getApplicationContext(), chooseRecipientActivity.class);
             // pass data to next activity
@@ -118,10 +107,12 @@ public class MainActivity extends AppCompatActivity {
             chooseActivity.putExtra("CLIENT_REGISTRATION_TOKEN", CLIENT_REGISTRATION_TOKEN);
 
 
+
             if(username.equals("")) {
                 new AlertDialog.Builder(this).setMessage("Please enter a username to login!").show();
             }
             else {
+
                 startActivity(chooseActivity);
             }
 

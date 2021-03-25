@@ -50,17 +50,6 @@ public class chooseRecipientActivity extends AppCompatActivity {
         Button btn_choose = findViewById(R.id.btn_choose);
 
 
-//        //go to history
-//        Button bttn_history = findViewById(R.id.bttn_history);
-//        bttn_history.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(chooseRecipientActivity.this, HistoryActivity.class);
-//                intent.putExtra("map", (Serializable) sendHistory);
-//                startActivity(intent);
-//            }
-//        });
-
 
         // listview
         ListView usersListView = findViewById(R.id.listView);
@@ -93,15 +82,7 @@ public class chooseRecipientActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                user = snapshot.getValue(User.class);
-//                if (Objects.requireNonNull(snapshot.getKey()).equalsIgnoreCase(username)) {
-//                    TextView textView = findViewById(R.id.textWindow);
-//
-//                    //Display how many stickers a user has sent
-//                    textView.setText(
-//                            String.format("%s" + " has sent %s stickers!", user.username, user.sentCount)
-//                    );
-//                }
+
             }
 
             @Override
@@ -127,8 +108,6 @@ public class chooseRecipientActivity extends AppCompatActivity {
             SentActivity.putExtra("username", username);
             SentActivity.putExtra("CLIENT_REGISTRATION_TOKEN", user.CLIENT_REGISTRATION_TOKEN);
             SentActivity.putExtra("selectedUserName", selectedUserName);
-//            SentActivity.putExtra("users", users);
-//            SentActivity.putExtra("database", (Serializable) database);
 
             startActivity(SentActivity);
         });
