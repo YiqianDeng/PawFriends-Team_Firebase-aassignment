@@ -6,12 +6,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -32,9 +33,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -47,16 +53,32 @@ public class StickerSendActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
     private int selectedSticker = 0;
     private String selectedUserName = "";
+    private final Map<String, Integer> sendHistory = new HashMap<>();
+    private final String TAG = "StickerSentActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_page);
+
         //initial
         SERVER_KEY = getIntent().getStringExtra("SERVER_KEY");
         username = getIntent().getStringExtra("username");
+//        int i = 0;
+//        Log.d(TAG, username.toString());
         Button bttn_send_img = findViewById(R.id.bttn_send_img);
 
+
+        //go to history
+        Button bttn_history = findViewById(R.id.bttn_history);
+        bttn_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StickerSendActivity.this, HistoryActivity.class);
+                intent.putExtra("map", (Serializable) sendHistory);
+                startActivity(intent);
+            }
+        });
 
 
         //list view
@@ -66,6 +88,8 @@ public class StickerSendActivity extends AppCompatActivity {
         usersListView.setAdapter(adapter);
         usersListView.setOnItemClickListener((parent, view, position, id)
                 -> selectedUserName = (String) parent.getItemAtPosition(position));
+
+
 
         //database
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
@@ -113,26 +137,41 @@ public class StickerSendActivity extends AppCompatActivity {
             }
         });
 
-        // select image
+        // send image
         bttn_send_img.setOnClickListener(v -> {
             if (selectedSticker == 0) {
                 new AlertDialog.Builder(this).setMessage("Please select an image").show();
             } else if (selectedUserName.equals("")) {
                 new AlertDialog.Builder(this).setMessage("Please select an User").show();
             } else {
-                //update the send count in database
-                updateCount(database);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (User user : users) {
-                            if (user.username.equals(selectedUserName)) {
-                                sendMessageToSpecUser(user.CLIENT_REGISTRATION_TOKEN);
-                                selectedUserName = "";
+                int SDK_INT = android.os.Build.VERSION.SDK_INT;
+                if (SDK_INT > 8)
+                {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                            .permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+                    if (isNetworkOnline()) {
+                        //update the send count in database
+                        updateCount(database);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (User user : users) {
+                                    if (user.username.equals(selectedUserName)) {
+                                        sendHistory.put(user.username, selectedSticker);
+                                        sendMessageToSpecUser(user.CLIENT_REGISTRATION_TOKEN);
+                                        selectedUserName = "";
+                                    }
+                                }
                             }
-                        }
+                        }).start();
+
+                    }else {
+                        Toast.makeText(getApplicationContext(), "Connection Error", Toast.LENGTH_LONG).show();
                     }
-                }).start();
+
+                }
+
             }
         });
 
@@ -227,19 +266,34 @@ public class StickerSendActivity extends AppCompatActivity {
             InputStream inputStream = httpURLConnection.getInputStream();
             final String resp = convertStreamToString(inputStream);
             Handler h = new Handler(Looper.getMainLooper());
+
         } catch (JSONException | IOException e) {
-//            Log.e(TAG,"sendMessageToNews threw error",e);
+
             e.printStackTrace();
         }
 
     }
 
-    /**
-     * Helper function.
-     */
+    // helper
     private String convertStreamToString(InputStream is) {
         Scanner s = new Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next().replace(",", ",\n") : "";
     }
+
+
+    public static boolean isNetworkOnline() {
+        boolean isOnline = false;
+        try {
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress("8.8.8.8", 53), 3000);
+            // socket.connect(new InetSocketAddress("114.114.114.114", 53), 3000);
+            isOnline = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return isOnline;
+    }
 }
+
 
