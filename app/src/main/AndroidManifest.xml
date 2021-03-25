@@ -10,11 +10,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Firebase">
-        <activity android:name=".SentStickerActivity" />
-        <activity android:name=".chooseRecipientActivity" />
-        <activity android:name=".StickerReceivedActivity" />
-        <activity android:name=".HistoryActivity"/>
-        <activity android:name=".StickerSendActivity" />
+        <activity
+            android:name=".SentStickerActivity"
+            android:parentActivityName=".chooseRecipientActivity"/>
+        <activity
+            android:name=".chooseRecipientActivity"
+            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".StickerReceivedActivity" />
+        <activity
+            android:name=".HistoryActivity"
+            android:parentActivityName=".SentStickerActivity" />
+        <activity
+            android:name=".StickerSendActivity"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,6 +32,13 @@
             </intent-filter>
         </activity>
 
+        <!--        <service-->
+        <!--            android:name=".MessagingService"-->
+        <!--            android:exported="false">-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
+        <!--            </intent-filter>-->
+        <!--        </service>-->
         <service
             android:name=".MessagingService"
             android:exported="false">
@@ -31,12 +47,13 @@
             </intent-filter>
         </service>
         <service
-            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+            android:name=".SentStickerActivity"
             android:exported="false">
-            <intent-filter android:priority="-500">
+            <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
 
         <receiver
             android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
@@ -46,6 +63,13 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </receiver>
+
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
     </application>
 
 </manifest>

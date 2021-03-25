@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -18,21 +20,23 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-
-import static edu.neu.madcourse.firebase.MainActivity.CLIENT_REGISTRATION_TOKEN;
 
 public class chooseRecipientActivity extends AppCompatActivity {
 
     private User user;
     private String username;
-    private final ArrayList<User> users = new ArrayList<>();
-    private final ArrayList<String> usernameList = new ArrayList<>();;
-    private ArrayAdapter<String> adapter;
-
-
     private String SERVER_KEY;
+    private final ArrayList<User> users = new ArrayList<>();
+    private final ArrayList<String> active_user_list = new ArrayList<>();;
+    private ArrayAdapter<String> adapter;
+    private String selectedUserName = "";
+    //    private final Map<String, Integer> sendHistory = new HashMap<>();
+    private final String TAG = "chooseRecipientActivity";
 
 
     @Override
@@ -40,18 +44,38 @@ public class chooseRecipientActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_recipient);
 
+        // init
         SERVER_KEY = getIntent().getStringExtra("SERVER_KEY");
         username = getIntent().getStringExtra("username");
-
-        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
-                usernameList);
-
-        ListView usersListView = findViewById(R.id.listView);
-        usersListView.setAdapter(adapter);
-
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         Button btn_choose = findViewById(R.id.btn_choose);
 
+
+//        //go to history
+//        Button bttn_history = findViewById(R.id.bttn_history);
+//        bttn_history.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(chooseRecipientActivity.this, HistoryActivity.class);
+//                intent.putExtra("map", (Serializable) sendHistory);
+//                startActivity(intent);
+//            }
+//        });
+
+
+        // listview
+        ListView usersListView = findViewById(R.id.listView);
+        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
+                active_user_list);
+        usersListView.setAdapter(adapter);
+        usersListView.setOnItemClickListener((parent, view, position, id)
+                -> selectedUserName = (String) parent.getItemAtPosition(position));
+//        int i = 0;
+//        Log.d(TAG, selectedUserName.toString());
+        TextView display = findViewById(R.id.textView2);
+
+
+        // database
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         database.child("users").addChildEventListener(new ChildEventListener() {
 
             @Override
@@ -60,21 +84,24 @@ public class chooseRecipientActivity extends AppCompatActivity {
                 assert user != null;
                 if (!user.username.equals(username)) {
                     users.add(user);
-                    usernameList.add(user.username);
+                    int i = 0;
+                    Log.d(TAG, "onChildAdded: "+user.username);
+                    active_user_list.add(user.username);
                     adapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                user = snapshot.getValue(User.class);
-                if (Objects.requireNonNull(snapshot.getKey()).equalsIgnoreCase(username)) {
-                    TextView textView = findViewById(R.id.textWindow);
-                    //Display how many stickers a user has sent
-                    textView.setText(
-                            String.format("%s" + " has sent %s stickers!", user.username, user.sentCount)
-                    );
-                }
+//                user = snapshot.getValue(User.class);
+//                if (Objects.requireNonNull(snapshot.getKey()).equalsIgnoreCase(username)) {
+//                    TextView textView = findViewById(R.id.textWindow);
+//
+//                    //Display how many stickers a user has sent
+//                    textView.setText(
+//                            String.format("%s" + " has sent %s stickers!", user.username, user.sentCount)
+//                    );
+//                }
             }
 
             @Override
@@ -99,6 +126,9 @@ public class chooseRecipientActivity extends AppCompatActivity {
             SentActivity.putExtra("SERVER_KEY", SERVER_KEY);
             SentActivity.putExtra("username", username);
             SentActivity.putExtra("CLIENT_REGISTRATION_TOKEN", user.CLIENT_REGISTRATION_TOKEN);
+            SentActivity.putExtra("selectedUserName", selectedUserName);
+//            SentActivity.putExtra("users", users);
+//            SentActivity.putExtra("database", (Serializable) database);
 
             startActivity(SentActivity);
         });

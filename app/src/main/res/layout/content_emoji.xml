@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toStartOf="@+id/img1"
         app:layout_constraintStart_toEndOf="@+id/img3"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/img4" />
+        app:srcCompat="@drawable/img3" />
 
     <ImageView
         android:id="@+id/img3"

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -53,14 +54,18 @@ public class StickerSendActivity extends AppCompatActivity {
     private int selectedSticker = 0;
     private String selectedUserName = "";
     private final Map<String, Integer> sendHistory = new HashMap<>();
+    private final String TAG = "StickerSentActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_page);
+
         //initial
         SERVER_KEY = getIntent().getStringExtra("SERVER_KEY");
         username = getIntent().getStringExtra("username");
+//        int i = 0;
+//        Log.d(TAG, username.toString());
         Button bttn_send_img = findViewById(R.id.bttn_send_img);
 
 
@@ -76,8 +81,6 @@ public class StickerSendActivity extends AppCompatActivity {
         });
 
 
-
-
         //list view
         ListView usersListView = findViewById(R.id.usersListView);
         adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
@@ -85,6 +88,8 @@ public class StickerSendActivity extends AppCompatActivity {
         usersListView.setAdapter(adapter);
         usersListView.setOnItemClickListener((parent, view, position, id)
                 -> selectedUserName = (String) parent.getItemAtPosition(position));
+
+
 
         //database
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
@@ -132,7 +137,7 @@ public class StickerSendActivity extends AppCompatActivity {
             }
         });
 
-        // select image
+        // send image
         bttn_send_img.setOnClickListener(v -> {
             if (selectedSticker == 0) {
                 new AlertDialog.Builder(this).setMessage("Please select an image").show();
@@ -161,7 +166,7 @@ public class StickerSendActivity extends AppCompatActivity {
                             }
                         }).start();
 
-                }else {
+                    }else {
                         Toast.makeText(getApplicationContext(), "Connection Error", Toast.LENGTH_LONG).show();
                     }
 
@@ -261,24 +266,16 @@ public class StickerSendActivity extends AppCompatActivity {
             InputStream inputStream = httpURLConnection.getInputStream();
             final String resp = convertStreamToString(inputStream);
             Handler h = new Handler(Looper.getMainLooper());
-//            h.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Log.e(TAG, "run: " + resp);
-//                    Toast.makeText(FCMActivity.this,"response was: " + resp,Toast.LENGTH_LONG).show();
-//                }
-//            });
+
 
         } catch (JSONException | IOException e) {
-//            Log.e(TAG,"sendMessageToNews threw error",e);
+
             e.printStackTrace();
         }
 
     }
 
-    /**
-     * Helper function.
-     */
+    // helper
     private String convertStreamToString(InputStream is) {
         Scanner s = new Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next().replace(",", ",\n") : "";
@@ -299,4 +296,5 @@ public class StickerSendActivity extends AppCompatActivity {
         return isOnline;
     }
 }
+
 
