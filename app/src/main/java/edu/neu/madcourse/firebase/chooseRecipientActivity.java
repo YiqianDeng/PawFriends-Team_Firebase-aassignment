@@ -108,8 +108,6 @@ public class chooseRecipientActivity extends AppCompatActivity {
             SentActivity.putExtra("username", username);
             SentActivity.putExtra("CLIENT_REGISTRATION_TOKEN", user.CLIENT_REGISTRATION_TOKEN);
             SentActivity.putExtra("selectedUserName", selectedUserName);
-//            SentActivity.putExtra("users", users);
-//            SentActivity.putExtra("database", (Serializable) database);
 
             startActivity(SentActivity);
         });
