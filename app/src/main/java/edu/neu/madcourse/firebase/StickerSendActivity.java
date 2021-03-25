@@ -227,14 +227,6 @@ public class StickerSendActivity extends AppCompatActivity {
             InputStream inputStream = httpURLConnection.getInputStream();
             final String resp = convertStreamToString(inputStream);
             Handler h = new Handler(Looper.getMainLooper());
-//            h.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Log.e(TAG, "run: " + resp);
-//                    Toast.makeText(FCMActivity.this,"response was: " + resp,Toast.LENGTH_LONG).show();
-//                }
-//            });
-
         } catch (JSONException | IOException e) {
 //            Log.e(TAG,"sendMessageToNews threw error",e);
             e.printStackTrace();
